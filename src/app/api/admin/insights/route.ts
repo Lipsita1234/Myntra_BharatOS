@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { model } from "@/lib/ai";
+import { generateContentWithGemini } from "@/lib/ai";
 
 export async function GET() {
   try {
@@ -67,8 +67,9 @@ Valid values for insight type: "success", "warning", "info", "trend"
 Valid values for alert type: "capacity", "weather", "spike"
 `;
 
-    const result = await model.generateContent(prompt);
-    const rawText = result.response.text();
+    try {
+      const result = await generateContentWithGemini(prompt);
+      const rawText = result.response.text();
     console.log("[AI Insights API] Raw response (first 500 chars):", rawText.substring(0, 500));
 
     // Robust JSON extraction — handles markdown fences and preamble text

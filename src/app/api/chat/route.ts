@@ -195,12 +195,12 @@ ${JSON.stringify(context, null, 2).substring(0, 3000)}`;
     return NextResponse.json({ success: true, response: responseText });
   } catch (error: any) {
     console.error("Chat API error:", error);
-    
+
     let errorMessage = error?.message || "Failed to generate AI response. Please try again.";
     if (errorMessage.includes("429") || error?.status === 429) {
       errorMessage = "⚠️ AI is currently experiencing high traffic (Rate Limit Exceeded). Please wait a few seconds and try again.";
     }
-    
+
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

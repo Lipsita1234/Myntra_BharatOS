@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
       const result = await model.generateContent(prompt);
       const responseText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
-      
+
       try {
         const recommendations = JSON.parse(responseText);
         return NextResponse.json({ success: true, recommendations });

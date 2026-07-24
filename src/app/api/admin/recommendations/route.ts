@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { model } from "@/lib/ai";
+import { generateContentWithGemini, GEMINI_MODEL } from "@/lib/ai";
 
 export async function GET() {
   try {
@@ -75,7 +75,7 @@ JSON structure (array of 3 objects):
 ]
 `;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateContentWithGemini(prompt);
     const rawText = result.response.text();
     console.log("[Recommendations API] Gemini raw:", rawText.substring(0, 400));
 
