@@ -12,44 +12,24 @@ function checkApiKey() {
 }
 
 /**
- * Smart helper executing requests with the requested "gemini-3.1-flash-lite" model.
- * If the remote API endpoint rejects the model string or auth credentials, it gracefully uses fallback models.
+ * Executes content generation strictly using the Gemini 3.1 Flash Lite model.
  */
 export async function generateContentWithGemini(prompt: string | any, systemInstruction?: string) {
   checkApiKey();
-  const modelsToTry = [
-    GEMINI_MODEL, // "gemini-3.1-flash-lite"
-    "gemini-2.0-flash-lite",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-  ];
-
-  let lastError: any = null;
-
-  for (const modelName of modelsToTry) {
-    try {
-      const activeModel = genAI.getGenerativeModel({
-        model: modelName,
-        ...(systemInstruction ? { systemInstruction } : {}),
-      });
-      const result = await activeModel.generateContent(prompt);
-      return result;
-    } catch (err: any) {
-      lastError = err;
-      console.warn(`[Gemini Engine] Attempt with model '${modelName}' failed: ${err.message}`);
-    }
-  }
-
-  throw lastError || new Error("Failed to generate content with Gemini AI.");
+  const activeModel = genAI.getGenerativeModel({
+    model: GEMINI_MODEL,
+    ...(systemInstruction ? { systemInstruction } : {}),
+  });
+  return await activeModel.generateContent(prompt);
 }
 
 /**
- * Predicts cluster formation probability and optimization metrics.
+ * Predicts cluster formation probability and optimization metrics using Gemini 3.1 Flash Lite.
  */
 export async function predictClusterViability(location: any, category: string, date: string): Promise<any> {
   checkApiKey();
   const prompt = `
-    You are an AI logistics engine for Myntra BharatOS.
+    You are an AI logistics engine for Myntra BharatOS running on ${GEMINI_MODEL}.
     Analyze the spatial clustering viability for orders.
     Input parameters:
     - Location: ${JSON.stringify(location)}
@@ -71,7 +51,7 @@ export async function predictClusterViability(location: any, category: string, d
     const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
     return JSON.parse(jsonStr);
   } catch (error: any) {
-    console.warn("Falling back to mathematical cluster viability model:", error.message);
+    console.warn(`[${GEMINI_MODEL}] Cluster prediction fallback:`, error.message);
     return {
       probabilityPercent: 88,
       estimatedTimeMinutes: 45,
@@ -82,7 +62,7 @@ export async function predictClusterViability(location: any, category: string, d
 }
 
 /**
- * Uses Gemini strictly to EXPLAIN the numerically calculated demand forecast.
+ * Uses Gemini 3.1 Flash Lite strictly to EXPLAIN the numerically calculated demand forecast.
  */
 export async function explainDemandForecast(forecastData: any[]): Promise<string> {
   checkApiKey();
@@ -108,7 +88,7 @@ export async function explainDemandForecast(forecastData: any[]): Promise<string
 }
 
 /**
- * Uses Gemini strictly to EXPLAIN generated recommendations.
+ * Uses Gemini 3.1 Flash Lite strictly to EXPLAIN generated recommendations.
  */
 export async function explainCopilotRecommendations(systemState: any, calculatedRecommendations: any[]): Promise<string> {
   checkApiKey();
