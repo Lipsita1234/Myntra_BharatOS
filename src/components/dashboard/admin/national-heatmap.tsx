@@ -133,8 +133,8 @@ export default function NationalHeatmap() {
               style={{ width: "100%", height: "100%" }}
             >
               <Geographies geography={INDIA_TOPO_JSON}>
-                {({ geographies }) =>
-                  geographies.map(geo => {
+                {({ geographies }: { geographies: any[] }) =>
+                  geographies.map((geo: any) => {
                     const geoName = geo.properties.NAME_1;
                     const isActive = selectedState?.name.toLowerCase() === geoName.toLowerCase();
                     const stateColor = getStateColor(geoName);
