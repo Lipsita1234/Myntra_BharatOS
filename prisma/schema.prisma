@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId    String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  orders    Order[]
+  products  Product[]
+  notifications Notification[]
+}
+
+model Order {
+  orderId      String    @id @default(uuid())
+  customer     User      @relation(fields: [customerId], references: [userId])
+  customerId   String
+  sellerId     String
+  productName  String    @default("Product")
+  productId    String?
+  warehouseId  String?
+  cluster      Cluster?  @relation(fields: [clusterId], references: [clusterId])
+  clusterId    String?
+  status       String    @default("pending")
+  deliveryMode String    @default("direct")
+  amount       Float     @default(0)
+  shippingCost Float     @default(0)
+  location     String    @default("")
+  lat          Float?
+  lng          Float?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  returnReason String    @default("Quality Check")
+  returnSavings Float    @default(0)
+  length_cm    Float    @default(0)
+  width_cm     Float    @default(0)
+  height_cm    Float    @default(0)
+  weight_kg    Float    @default(0)
+  calculated_volume_m3 Float @default(0)
+  is_oversized Boolean  @default(false)
+}
+
+model Cluster {
+  clusterId             String   @id @default(uuid())
+  name                  String   @default("Cluster")
+  location              String
+  city                  String   @default("")
+  members               Int      @default(0)
+  maxMembers            Int      @default(10)
+  status                String   @default("forming")
+  savings               Float    @default(0)
+  eta                   String   @default("")
+  vehicleId             String?
+  completionProbability Float    @default(0)
+  lat                   Float?
+  lng                   Float?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  orders                Order[]
+  fleet_max_volume_m3   Float    @default(1.20)
+  current_volume_m3     Float    @default(0)
+  spatial_radius_km     Float    @default(1.8)
+}
+
+model Warehouse {
+  warehouseId String  @id @default(uuid())
+  name        String  @default("Warehouse")
+  location    String
+  capacity    Int
+  inventory   Int     @default(0)
+  utilization Float   @default(0)
+  orders      Int     @default(0)
+  city         String  @default("")
+  state        String  @default("")
+  lat          Float?
+  lng          Float?
+  rating       Float   @default(4.8)
+  returnRate   Float   @default(8.0)
+  deliveryDays Float   @default(2.1)
+  incoming     Int     @default(0)
+  outgoing     Int     @default(0)
+  aiRecommendation String @default("Utilization optimal. Maintain current capacity.")
+}
+
+model Product {
+  productId    String   @id @default(uuid())
+  name         String
+  category     String
+  stock        Int      @default(0)
+  sold         Int      @default(0)
+  price        Float    @default(0)
+  reorderLevel Int      @default(10)
+  status       String   @default("healthy")
+  seller       User     @relation(fields: [sellerId], references: [userId])
+  sellerId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  length_cm    Float    @default(0)
+  width_cm     Float    @default(0)
+  height_cm    Float    @default(0)
+  calculated_volume_m3 Float @default(0)
+  is_oversized Boolean  @default(false)
+}
+
+model Vehicle {
+  vehicleId       String  @id @default(uuid())
+  driver          String
+  vehicleType     String  @default("Bike")
+  route           String  @default("[]")
+  fuel            Float   @default(100)
+  status          String  @default("idle")
+  currentLocation String  @default("0,0")
+  deliveries      Int     @default(0)
+  rating          Float   @default(4.5)
+  lat             Float?
+  lng             Float?
+  city            String  @default("Bangalore")
+  packages        Int     @default(0)
+  eta             String  @default("-")
+}
+
+model MicroHub {
+  hubId    String  @id @default(uuid())
+  name     String  @default("Hub")
+  location String
+  capacity Int     @default(50)
+  orders   Int     @default(0)
+  savings  Float   @default(0)
+  status   String  @default("recommended")
+  hubType  String  @default("permanent")
+  city     String  @default("")
+  lat      Float?
+  lng      Float?
+  fleetReductions Float @default(0)
+}
+
+model DemandForecast {
+  id              String   @id @default(uuid())
+  region          String
+  state           String   @default("")
+  product         String
+  currentDemand   Int      @default(0)
+  predictedDemand Int      @default(0)
+  change          Float    @default(0)
+  factor          String   @default("")
+  confidence      Float
+  forecastDate    DateTime @default(now())
+}
+
+model Sustainability {
+  id                  String   @id @default(uuid())
+  fuelSaved           Float    @default(0)
+  distanceSaved       Float    @default(0)
+  co2Reduced          Float    @default(0)
+  deliveriesOptimized Int      @default(0)
+  moneySaved          Float    @default(0)
+  tripsReduced        Int      @default(0)
+  createdAt           DateTime @default(now())
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [userId])
+  userId      String
+  type        String   @default("info")
+  severity    String   @default("low")
+  title       String
+  description String
+  read        Boolean  @default(false)
+  region      String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model Alert {
+  id          String   @id @default(uuid())
+  type        String   @default("info")
+  severity    String   @default("low")
+  title       String
+  description String
+  region      String   @default("")
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
