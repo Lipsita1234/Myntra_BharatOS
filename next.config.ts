@@ -2,10 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@prisma/client', 'bcryptjs'],
-  experimental: {
-    outputFileTracingIncludes: {
-      '/api/**/*': ['./prisma/prisma/dev.db', './prisma/dev.db'],
-    },
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./prisma/prisma/dev.db', './prisma/dev.db'],
   },
 };
 
