@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     const baseRevenueStr = `₹${(baseline.totalRevenue / 10000000).toFixed(1)} Cr/month`;
 
     // 2. Try Gemini AI simulation first
-    if (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.startsWith("AQ.")) {
+    if (process.env.GEMINI_API_KEY) {
       try {
         const prompt = `
 You are a strategic AI logistics simulation engine for Myntra BharatOS.

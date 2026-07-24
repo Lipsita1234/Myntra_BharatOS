@@ -258,7 +258,7 @@ export async function POST(req: Request) {
     else if (persona === "admin") context = await getAdminContext();
     else if (persona === "ops") context = await getOpsContext();
 
-    if (process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.startsWith("AQ.")) {
+    if (process.env.GEMINI_API_KEY) {
       try {
         const systemPrompt = `${systemPrompts[persona]}
 
