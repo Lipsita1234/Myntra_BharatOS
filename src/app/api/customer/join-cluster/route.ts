@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
     // 1. Oversized Pre-Filter Check 
     const is_oversized = frontend_oversized || false;
-    let bypassed_heavy_orders = [];
+    let bypassed_heavy_orders: string[] = [];
     
     if (is_oversized) {
       bypassed_heavy_orders.push(`heavy_freight_order_${Math.floor(Math.random() * 10000)}`);
